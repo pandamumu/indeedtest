@@ -24,12 +24,12 @@
 
                         <div class="mt-6">
                             <label for="url_respnse">URL Response</label>
-                            <textarea id="url_respnse" name="url_respnse" class="w-full mt-1 py-1 px-3 rounded border border-gray-200">{{ old('url_respnse') }}</textarea>
+                            <textarea id="url_respnse" name="url_respnse" class="w-full mt-1 py-1 px-3 rounded border border-gray-200" rows="15" disabled>{{ old('url_respnse') }}</textarea>
                         </div>
 
                         <div class="mt-6">
                             <label for="url_respnse">Inverted URL Response</label>
-                            <textarea id="inverted_url_respnse" name="inverted_url_respnse" class="w-full mt-1 py-1 px-3 rounded border border-gray-200">{{ old('email') }}</textarea>
+                            <textarea id="inverted_url_respnse" name="inverted_url_respnse" class="w-full mt-1 py-1 px-3 rounded border border-gray-200" rows="15" disabled>{{ old('email') }}</textarea>
                         </div>
 
                         <div class="flex justify-between items-center mt-6">

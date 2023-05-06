@@ -11,8 +11,9 @@ $(function(){
 				utils.ui.getQuery();
 			},
 			getQuery: function(){
-				console.log(sessionStorage.getItem('url'));
-
+				function ReverseString(val) {
+					return val.split(/\s+/).map(w => w.split('').reverse().join('')).join(' ');
+				}
 				$.ajaxSetup({
 			        headers: {
 			            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -31,10 +32,28 @@ $(function(){
 						data: formData,
 						dataType: 'json',
 						encode: true,
-					}).done(function(data){
-						$('textarea#url_respnse').val(JSON.stringify(JSON.parse(data.content), undefined, 4));
-						$('textarea#inverted_url_respnse').val(JSON.stringify(JSON.parse(data.inverted), undefined, 4));
-					});
+						success: function(data){
+							var reversedArray = JSON.stringify(JSON.parse(data.inverted), undefined, 4)
+							var separators = [',', '[', ']', '{', '}', '"'];
+
+							for (var i = 0; i < separators.length; i++) { 
+								var rg = new RegExp("\\" + separators[i], "g"); 
+								reversedArray = reversedArray.replace(rg, " " + separators[i] + " "); 
+							}
+
+							$('textarea#url_respnse').val(JSON.stringify(JSON.parse(data.content), undefined, 4));
+							$('textarea#inverted_url_respnse').val(ReverseString(reversedArray));
+						},
+						error: function(data){
+							var errors = $.parseJSON(data.responseText);
+					        alert(errors.message);
+						}
+					}).fail(function(jqXHR){
+				        if(jqXHR.status==500 || jqXHR.status==0){
+				            alert('No JSON Data to process!'); 
+				        }
+				    });
+
 			    }
 
 				$('form#queryForm').submit(function(e){
@@ -50,12 +69,27 @@ $(function(){
 						dataType: 'json',
 						encode: true,
 						success: function(data){
+							var reversedArray = JSON.stringify(JSON.parse(data.inverted), undefined, 4)
+							var separators = [',', '[', ']', '{', '}', '"'];
+
+							for (var i = 0; i < separators.length; i++) { 
+								var rg = new RegExp("\\" + separators[i], "g"); 
+								reversedArray = reversedArray.replace(rg, " " + separators[i] + " "); 
+							}
+
+							var reversedWords = ReverseString(reversedArray);
+
+							for (var i = 0; i < separators.length; i++) { 
+								var rg = new RegExp("\\" + separators[i], "g"); 
+								reversedWords = reversedWords.replace(rg, "" + separators[i] + ""); 
+							}
+
 							$('textarea#url_respnse').val(JSON.stringify(JSON.parse(data.content), undefined, 4));
-							$('textarea#inverted_url_respnse').val(JSON.stringify(JSON.parse(data.inverted), undefined, 4));
+							$('textarea#inverted_url_respnse').val(JSON.stringify(JSON.parse(reversedWords), undefined, 4));
+
 						},
 						error: function(data){
 							var errors = $.parseJSON(data.responseText);
-							console.log(errors);
 					        alert(errors.message);
 						}
 					}).fail(function(jqXHR){
